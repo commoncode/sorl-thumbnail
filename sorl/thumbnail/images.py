@@ -1,5 +1,6 @@
 import re
 import urllib2
+
 from django.core.files.base import File, ContentFile
 from django.core.files.storage import Storage, default_storage
 from django.core.urlresolvers import reverse
@@ -115,6 +116,10 @@ class ImageFile(BaseImageFile):
 
     @property
     def url(self):
+        if hasattr(settings, 'USE_CDN') and settings.USE_CDN:
+            return '%s%s' % (
+                settings.MEDIA_URL,
+                self.name)
         return self.storage.url(self.name)
 
     def read(self):
